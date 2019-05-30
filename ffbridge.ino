@@ -10,10 +10,10 @@
 #define USART_TXENABLE          1
 #define USART_TXENPIN           2
 #define USARTDRIVER             Serial1
-#define SERIALPORT_INSKETCH
+/*#define SERIALPORT_INSKETCH
 #define LOG          Serial
 #define VNET_DEBUG_INSKETCH
-#define VNET_DEBUG  1
+#define VNET_DEBUG  1*/
 
 #include <SPI.h>
 
@@ -28,14 +28,14 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define gw_address 77
 
 // Define the RS485 network configuration
-#define myvNet_subnet 0xFF00
-#define Emelet_RS485 0xCD01
-#define GLent 0xCD02
-#define GFent 0xCD03
-#define Tekla 0xCD04
-#define Halo 0xCD05
-#define Vendeg 0xCD06
-#define Furdo 0xCD07
+#define myvNet_subnet   0xFF00
+#define Gateway_RS485   0xDE01
+#define GLent           0xDE02
+#define GFent           0xDE03
+#define Tekla           0xDE04
+#define Halo            0xDE05
+#define Vendeg          0xDE06
+#define Furdo           0xDE07
 
 // Local light slots
 #define SL_MUTEREM 0
@@ -47,6 +47,7 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 // Local blind slots
 #define SB_TEKLA 5
 #define SB_HALO 6
+#define BL_TIMEOUT 0xAD
 
 // Local light output PINs
 #define MUTEREM 22
@@ -64,26 +65,22 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 void setup() {
   
   Initialize();
-  Serial.begin(9600);  //needed for debug only
   
   Souliss_SetIPAddress(ip_address, subnet_mask, ip_gateway);
-  SetAddress(Emelet_RS485, myvNet_subnet, 0x0000);                    // Set the address on the RS485 bus
+  SetAddress(Gateway_RS485, myvNet_subnet, 0);                    // Set the address on the RS485 bus
   SetAddress(myvNet_address, myvNet_subnet, gw_address);
-
+  
+  //Serial.begin(9600);  //needed for debug only
     // Define PINs as output
   for (int thisPin = 22; thisPin < 32; thisPin++) {
       pinMode(thisPin, OUTPUT);  
   }
 
   // Drive lights low by default
-  for (int thisPin = 22; thisPin < 27; thisPin++) {
+  for (int thisPin = 22; thisPin < 32; thisPin++) {
       digitalWrite(thisPin, LOW);  
   }
   
-  // Drive motors high by default
-  for (int thisPin = 28; thisPin < 32; thisPin++) {
-      digitalWrite(thisPin, HIGH);  
-  }
 
   // Define light logic
   Set_T11(SL_MUTEREM);
@@ -111,8 +108,8 @@ void loop() {
       Logic_T11(SL_FURDO);
       
       // This starts the blind logic
-      Logic_T22(SB_TEKLA);
-      Logic_T22(SB_HALO);
+      Souliss_Logic_T22(memory_map, SB_TEKLA, &data_changed, BL_TIMEOUT);
+      Souliss_Logic_T22(memory_map, SB_HALO, &data_changed, BL_TIMEOUT);
 
       //This pulls the PINs High for light control
       DigOut(MUTEREM, Souliss_T1n_Coil, SL_MUTEREM);
@@ -122,12 +119,17 @@ void loop() {
       DigOut(FURDO, Souliss_T1n_Coil, SL_FURDO);
       
       // This pulls the PINs Low for blind control
-      LowDigOut(TEKLAF, Souliss_T2n_Coil_Open, SB_TEKLA);
-      LowDigOut(TEKLAL, Souliss_T2n_Coil_Close, SB_TEKLA);
-      LowDigOut(HALOF, Souliss_T2n_Coil_Open, SB_HALO);
-      LowDigOut(HALOL, Souliss_T2n_Coil_Close, SB_HALO);
+      DigOut(TEKLAF, Souliss_T2n_Coil_Open, SB_TEKLA);
+      DigOut(TEKLAL, Souliss_T2n_Coil_Close, SB_TEKLA);
+      DigOut(HALOF, Souliss_T2n_Coil_Open, SB_HALO);
+      DigOut(HALOL, Souliss_T2n_Coil_Close, SB_HALO);
     }
 
+    FAST_1110ms() {
+      Timer_Windows(SB_TEKLA);
+      Timer_Windows(SB_HALO);
+    }
+    
     FAST_BridgeComms();
 
   }
