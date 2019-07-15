@@ -47,7 +47,15 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 // Local blind slots
 #define SB_TEKLA 5
 #define SB_HALO 6
+#define SB_RTEKLA 7
+#define SB_RHALO 8
+#define SB_RSTUDIO1 9
+#define SB_RSTUDIO2 10
+#define SB_RSTUDIO3 11
+#define SB_RVENDEG 12
+#define SB_RFURDO 13
 #define BL_TIMEOUT 0xAD
+#define BL_RTIMEOUT 0xB4
 
 // Local light output PINs
 #define MUTEREM 22
@@ -61,6 +69,20 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define TEKLAL 29
 #define HALOF 30
 #define HALOL 31
+#define RTEKLAF 32
+#define RTEKLAL 33
+#define RHALOF 34
+#define RHALOL 35
+#define RSTUDIO1F 36
+#define RSTUDIO1L 37
+#define RSTUDIO2F 38
+#define RSTUDIO2L 39
+#define RSTUDIO3F 40
+#define RSTUDIO3L 41
+#define RVENDEGF 42
+#define RVENDEGL 43
+#define RFURDOF 44
+#define RFURDOL 45
 
 void setup() {
   
@@ -72,12 +94,12 @@ void setup() {
   
   //Serial.begin(9600);  //needed for debug only
     // Define PINs as output
-  for (int thisPin = 22; thisPin < 32; thisPin++) {
+  for (int thisPin = 22; thisPin < 46; thisPin++) {
       pinMode(thisPin, OUTPUT);  
   }
 
   // Drive lights low by default
-  for (int thisPin = 22; thisPin < 32; thisPin++) {
+  for (int thisPin = 22; thisPin < 46; thisPin++) {
       digitalWrite(thisPin, LOW);  
   }
   
@@ -92,6 +114,13 @@ void setup() {
   // Define T22 logic for all motors
   Set_T22(SB_TEKLA);
   Set_T22(SB_HALO);
+  Set_T22(SB_RTEKLA);
+  Set_T22(SB_RHALO);
+  Set_T22(SB_RSTUDIO1);
+  Set_T22(SB_RSTUDIO2);
+  Set_T22(SB_RSTUDIO3);
+  Set_T22(SB_RVENDEG);
+  Set_T22(SB_RFURDO);
   
 }
 
@@ -110,6 +139,13 @@ void loop() {
       // This starts the blind logic
       Souliss_Logic_T22(memory_map, SB_TEKLA, &data_changed, BL_TIMEOUT);
       Souliss_Logic_T22(memory_map, SB_HALO, &data_changed, BL_TIMEOUT);
+      Souliss_Logic_T22(memory_map, SB_RTEKLA, &data_changed, BL_RTIMEOUT);
+      Souliss_Logic_T22(memory_map, SB_RHALO, &data_changed, BL_RTIMEOUT);
+      Souliss_Logic_T22(memory_map, SB_RSTUDIO1, &data_changed, BL_RTIMEOUT);
+      Souliss_Logic_T22(memory_map, SB_RSTUDIO2, &data_changed, BL_RTIMEOUT);
+      Souliss_Logic_T22(memory_map, SB_RSTUDIO3, &data_changed, BL_RTIMEOUT);
+      Souliss_Logic_T22(memory_map, SB_RVENDEG, &data_changed, BL_RTIMEOUT);
+      Souliss_Logic_T22(memory_map, SB_RFURDO, &data_changed, BL_RTIMEOUT);
 
       //This pulls the PINs High for light control
       DigOut(MUTEREM, Souliss_T1n_Coil, SL_MUTEREM);
@@ -123,11 +159,33 @@ void loop() {
       DigOut(TEKLAL, Souliss_T2n_Coil_Close, SB_TEKLA);
       DigOut(HALOF, Souliss_T2n_Coil_Open, SB_HALO);
       DigOut(HALOL, Souliss_T2n_Coil_Close, SB_HALO);
+      DigOut(RTEKLAF, Souliss_T2n_Coil_Open, SB_RTEKLA);
+      DigOut(RTEKLAL, Souliss_T2n_Coil_Close, SB_RTEKLA);
+      DigOut(RHALOF, Souliss_T2n_Coil_Open, SB_RHALO);
+      DigOut(RHALOL, Souliss_T2n_Coil_Close, SB_RHALO);
+      DigOut(RSTUDIO1F, Souliss_T2n_Coil_Open, SB_RSTUDIO1);
+      DigOut(RSTUDIO1L, Souliss_T2n_Coil_Close, SB_RSTUDIO1);
+      DigOut(RSTUDIO2F, Souliss_T2n_Coil_Open, SB_RSTUDIO2);
+      DigOut(RSTUDIO2L, Souliss_T2n_Coil_Close, SB_RSTUDIO2);
+      DigOut(RSTUDIO3F, Souliss_T2n_Coil_Open, SB_RSTUDIO3);
+      DigOut(RSTUDIO3L, Souliss_T2n_Coil_Close, SB_RSTUDIO3);
+      DigOut(RVENDEGF, Souliss_T2n_Coil_Open, SB_RVENDEG);
+      DigOut(RVENDEGL, Souliss_T2n_Coil_Close, SB_RVENDEG);
+      DigOut(RFURDOF, Souliss_T2n_Coil_Open, SB_RFURDO);
+      DigOut(RFURDOL, Souliss_T2n_Coil_Close, SB_RFURDO);
+      
     }
 
     FAST_1110ms() {
       Timer_Windows(SB_TEKLA);
       Timer_Windows(SB_HALO);
+      Timer_Windows(SB_RTEKLA);
+      Timer_Windows(SB_RHALO);
+      Timer_Windows(SB_RSTUDIO1);
+      Timer_Windows(SB_RSTUDIO2);
+      Timer_Windows(SB_RSTUDIO3);
+      Timer_Windows(SB_RVENDEG);
+      Timer_Windows(SB_RFURDO);
     }
     
     FAST_BridgeComms();
