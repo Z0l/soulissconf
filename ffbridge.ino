@@ -53,9 +53,9 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define SB_RSTUDIO2 10
 #define SB_RSTUDIO3 11
 #define SB_RVENDEG 12
-#define SB_RFURDO 13
+
 #define BL_TIMEOUT 0xAD
-#define BL_RTIMEOUT 0xB4
+#define BL_RTIMEOUT 0xC4
 
 // Local light output PINs
 #define MUTEREM 22
@@ -81,8 +81,7 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define RSTUDIO3L 41
 #define RVENDEGF 42
 #define RVENDEGL 43
-#define RFURDOF 44
-#define RFURDOL 45
+
 
 void setup() {
   
@@ -94,12 +93,12 @@ void setup() {
   
   //Serial.begin(9600);  //needed for debug only
     // Define PINs as output
-  for (int thisPin = 22; thisPin < 46; thisPin++) {
+  for (int thisPin = 22; thisPin < 44; thisPin++) {
       pinMode(thisPin, OUTPUT);  
   }
 
   // Drive lights low by default
-  for (int thisPin = 22; thisPin < 46; thisPin++) {
+  for (int thisPin = 22; thisPin < 44; thisPin++) {
       digitalWrite(thisPin, LOW);  
   }
   
@@ -120,7 +119,6 @@ void setup() {
   Set_T22(SB_RSTUDIO2);
   Set_T22(SB_RSTUDIO3);
   Set_T22(SB_RVENDEG);
-  Set_T22(SB_RFURDO);
   
 }
 
@@ -145,7 +143,6 @@ void loop() {
       Souliss_Logic_T22(memory_map, SB_RSTUDIO2, &data_changed, BL_RTIMEOUT);
       Souliss_Logic_T22(memory_map, SB_RSTUDIO3, &data_changed, BL_RTIMEOUT);
       Souliss_Logic_T22(memory_map, SB_RVENDEG, &data_changed, BL_RTIMEOUT);
-      Souliss_Logic_T22(memory_map, SB_RFURDO, &data_changed, BL_RTIMEOUT);
 
       //This pulls the PINs High for light control
       DigOut(MUTEREM, Souliss_T1n_Coil, SL_MUTEREM);
@@ -171,8 +168,6 @@ void loop() {
       DigOut(RSTUDIO3L, Souliss_T2n_Coil_Close, SB_RSTUDIO3);
       DigOut(RVENDEGF, Souliss_T2n_Coil_Open, SB_RVENDEG);
       DigOut(RVENDEGL, Souliss_T2n_Coil_Close, SB_RVENDEG);
-      DigOut(RFURDOF, Souliss_T2n_Coil_Open, SB_RFURDO);
-      DigOut(RFURDOL, Souliss_T2n_Coil_Close, SB_RFURDO);
       
     }
 
@@ -185,7 +180,6 @@ void loop() {
       Timer_Windows(SB_RSTUDIO2);
       Timer_Windows(SB_RSTUDIO3);
       Timer_Windows(SB_RVENDEG);
-      Timer_Windows(SB_RFURDO);
     }
     
     FAST_BridgeComms();
