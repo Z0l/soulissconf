@@ -69,8 +69,8 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define TEKLAL 29
 #define HALOF 30
 #define HALOL 31
-#define RTEKLAF 32
-#define RTEKLAL 33
+#define RTEKLAF 44
+#define RTEKLAL 45
 #define RHALOF 34
 #define RHALOL 35
 #define RSTUDIO1F 36
@@ -79,8 +79,8 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define RSTUDIO2L 39
 #define RSTUDIO3F 40
 #define RSTUDIO3L 41
-#define RVENDEGF 42
-#define RVENDEGL 43
+#define RVENDEGF 46
+#define RVENDEGL 47
 
 
 void setup() {
