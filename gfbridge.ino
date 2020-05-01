@@ -205,6 +205,7 @@ void loop()
     }
 
     FAST_510ms() {
+        Timer_SimpleLight(SP_CIRKULACIOS);
         Timer_Windows(SB_NAPPALI1);
         Timer_Windows(SB_NAPPALI2);
         Timer_Windows(SB_NAPPALI3);
