@@ -53,10 +53,13 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define SB_NAPPALI3 11
 #define SB_HALO1 12
 #define SB_HALO2 13
-#define BL_TIMEOUT 0xAE
+#define BL_TIMEOUT 0xBB
 
 //cirkulacios szivattyu
 #define SP_CIRKULACIOS 14
+#define SP_GF_PUMP 15
+#define SP_FF_PUMP 16
+#define SP_HEATING 17
 
 // Local light output PINs
 #define ELOSZOBA 22
@@ -82,7 +85,9 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define HALO2L    40
 
 #define CIRKULACIOS 50
-
+#define GF_PUMP 51
+#define FF_PUMP 52
+#define HEATING 53
 
 void setup()
 {
@@ -99,22 +104,16 @@ void setup()
   SetAsPeerNode(Emelet, 1);
 
   // Define PINs as output
-  for (int thisPin = 22; thisPin < 41; thisPin++) {
+  for (int thisPin = 22; thisPin < 54; thisPin++) {
       pinMode(thisPin, OUTPUT);  
   }
 
-  // Drive lights low by default
-  for (int thisPin = 22; thisPin < 31; thisPin++) {
+  // Drive PINs low by default
+  for (int thisPin = 22; thisPin < 54; thisPin++) {
       digitalWrite(thisPin, LOW);  
   }
   
-  // Drive motors high by default
-  for (int thisPin = 31; thisPin < 41; thisPin++) {
-      digitalWrite(thisPin, HIGH);  
-  }
 
-  //Drive pump pin low by default
-  digitalWrite(CIRKULACIOS, LOW);
 
   // Define light logic
   Set_T11(SL_ELOSZOBA);
@@ -136,6 +135,9 @@ void setup()
 
   //define T11 for circulation pump
   Set_T11(SP_CIRKULACIOS);
+  Set_T11(SP_GF_PUMP);
+  Set_T11(SP_FF_PUMP);
+  Set_T11(SP_HEATING);
 }
 
 void loop()
@@ -157,14 +159,19 @@ void loop()
       Logic_T11(SL_KULSO3);
       
       // This starts the blind logic
+
       Souliss_Logic_T22(memory_map, SB_NAPPALI1, &data_changed, BL_TIMEOUT);
       Souliss_Logic_T22(memory_map, SB_NAPPALI2, &data_changed, BL_TIMEOUT);
       Souliss_Logic_T22(memory_map, SB_NAPPALI3, &data_changed, BL_TIMEOUT);
       Souliss_Logic_T22(memory_map, SB_HALO1, &data_changed, BL_TIMEOUT);
       Souliss_Logic_T22(memory_map, SB_HALO2, &data_changed, BL_TIMEOUT);
+      
 
       // Pump logic
       Logic_T11(SP_CIRKULACIOS);
+      Logic_T11(SP_GF_PUMP);
+      Logic_T11(SP_FF_PUMP);
+      Logic_T11(SP_HEATING);
 
 
       //This pulls the PINs High for light control
@@ -179,22 +186,25 @@ void loop()
       DigOut(KULSO3, Souliss_T1n_Coil, SL_KULSO3);
       
       // This pulls the PINs Low for blind control
-      LowDigOut(NAPPALI1F, Souliss_T2n_Coil_Open, SB_NAPPALI1);
-      LowDigOut(NAPPALI1L, Souliss_T2n_Coil_Close, SB_NAPPALI1);
-      LowDigOut(NAPPALI2F, Souliss_T2n_Coil_Open, SB_NAPPALI2);
-      LowDigOut(NAPPALI2L, Souliss_T2n_Coil_Close, SB_NAPPALI2);
-      LowDigOut(NAPPALI3F, Souliss_T2n_Coil_Open, SB_NAPPALI3);
-      LowDigOut(NAPPALI3L, Souliss_T2n_Coil_Close, SB_NAPPALI3);
-      LowDigOut(HALO1F, Souliss_T2n_Coil_Open, SB_HALO1);
-      LowDigOut(HALO1L, Souliss_T2n_Coil_Close, SB_HALO1);
-      LowDigOut(HALO2F, Souliss_T2n_Coil_Open, SB_HALO2);
-      LowDigOut(HALO2L, Souliss_T2n_Coil_Close, SB_HALO2);
+      DigOut(NAPPALI1F, Souliss_T2n_Coil_Open, SB_NAPPALI1);
+      DigOut(NAPPALI1L, Souliss_T2n_Coil_Close, SB_NAPPALI1);
+      DigOut(NAPPALI2F, Souliss_T2n_Coil_Open, SB_NAPPALI2);
+      DigOut(NAPPALI2L, Souliss_T2n_Coil_Close, SB_NAPPALI2);
+      DigOut(NAPPALI3F, Souliss_T2n_Coil_Open, SB_NAPPALI3);
+      DigOut(NAPPALI3L, Souliss_T2n_Coil_Close, SB_NAPPALI3);
+      DigOut(HALO1F, Souliss_T2n_Coil_Open, SB_HALO1);
+      DigOut(HALO1L, Souliss_T2n_Coil_Close, SB_HALO1);
+      DigOut(HALO2F, Souliss_T2n_Coil_Open, SB_HALO2);
+      DigOut(HALO2L, Souliss_T2n_Coil_Close, SB_HALO2);
 
       //Pulling PIN high for circulation pump
       DigOut(CIRKULACIOS, Souliss_T1n_Coil, SP_CIRKULACIOS);
+      DigOut(GF_PUMP, Souliss_T1n_Coil, SP_GF_PUMP);
+      DigOut(FF_PUMP, Souliss_T1n_Coil, SP_FF_PUMP);
+      DigOut(HEATING, Souliss_T1n_Coil, SP_HEATING);
     }
 
-    FAST_1110ms() {
+    FAST_510ms() {
         Timer_Windows(SB_NAPPALI1);
         Timer_Windows(SB_NAPPALI2);
         Timer_Windows(SB_NAPPALI3);
@@ -205,4 +215,10 @@ void loop()
 
   }
 
+EXECUTESLOW() {
+    UPDATESLOW();
+    SLOW_10s() {
+
+    }
+}
 }
