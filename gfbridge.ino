@@ -84,10 +84,10 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define HALO2F    39
 #define HALO2L    40
 
-#define CIRKULACIOS 50
-#define GF_PUMP 51
-#define FF_PUMP 52
-#define HEATING 53
+#define CIRKULACIOS 42
+#define GF_PUMP 43
+#define FF_PUMP 44
+#define HEATING 45
 
 void setup()
 {
