@@ -61,6 +61,10 @@ uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define SP_FF_PUMP 16
 #define SP_HEATING 17
 
+//Local bell
+#define SS_BELL 18
+#define BELL 20
+
 // Local light output PINs
 #define ELOSZOBA 22
 #define NAPPALI 23
@@ -103,6 +107,8 @@ void setup()
   // This node as gateway will get data from the Peer
   SetAsPeerNode(Emelet, 1);
 
+  pinMode(BELL, INPUT);
+
   // Define PINs as output
   for (int thisPin = 22; thisPin < 54; thisPin++) {
       pinMode(thisPin, OUTPUT);  
@@ -138,6 +144,7 @@ void setup()
   Set_T11(SP_GF_PUMP);
   Set_T11(SP_FF_PUMP);
   Set_T11(SP_HEATING);
+  Set_T11(SS_BELL);
 }
 
 void loop()
@@ -165,13 +172,17 @@ void loop()
       Souliss_Logic_T22(memory_map, SB_NAPPALI3, &data_changed, BL_TIMEOUT);
       Souliss_Logic_T22(memory_map, SB_HALO1, &data_changed, BL_TIMEOUT);
       Souliss_Logic_T22(memory_map, SB_HALO2, &data_changed, BL_TIMEOUT);
-      
 
+      //Ring bell
+      if(DigIn(BELL, Souliss_T1n_ToggleCmd, SS_BELL));
+      
       // Pump logic
       Logic_T11(SP_CIRKULACIOS);
       Logic_T11(SP_GF_PUMP);
       Logic_T11(SP_FF_PUMP);
       Logic_T11(SP_HEATING);
+      // Bell logic
+      Logic_T11(SS_BELL);
 
 
       //This pulls the PINs High for light control
