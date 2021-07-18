@@ -31,16 +31,15 @@ void setup() {
   
   Souliss_SetIPAddress(ip_address, subnet_mask, ip_gateway);
   SetAddress(myvNet_address, myvNet_subnet, gw_address);
-  
+
   pinMode(GARAGE, OUTPUT);
   pinMode(B_GARAGE, INPUT);
 
-  // Drive lights low by default
-  digitalWrite(GARAGE, LOW);
+    // Drive lights low by default
+  //digitalWrite(GARAGE, LOW);
 
   // Define light logic
   Set_T11(SL_GARAGELIGHT);
-  
 }
 
 void loop() {
@@ -49,12 +48,11 @@ void loop() {
 
     FAST_50ms() {
 
-      DigIn(B_GARAGE, Souliss_T1n_ToggleCmd, SL_GARAGELIGHT);
+      if(DigIn(B_GARAGE, Souliss_T1n_ToggleCmd, SL_GARAGELIGHT))
+        DigOut(GARAGE, Souliss_T1n_Coil, SL_GARAGELIGHT);
 
       Logic_T11(SL_GARAGELIGHT);
 
-      DigOut(GARAGE, Souliss_T1n_Coil, SL_GARAGELIGHT);
-      
     }
 
     FAST_PeerComms();
