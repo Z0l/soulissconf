@@ -25,6 +25,7 @@ uint8_t subnet_mask[4] = {255, 255, 255, 0};
 uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define myvNet_address  ip_address[3]       // The last byte of the IP address (77) is also the vNet address
 #define Emelet 78
+#define Garazs 79
 // Define the RS485 network configuration
 #define myvNet_subnet   0xFF00
 #define Gateway_RS485   0xCE01
@@ -106,6 +107,7 @@ void setup()
 
   // This node as gateway will get data from the Peer
   SetAsPeerNode(Emelet, 1);
+  SetAsPeerNode(Garazs, 2);
 
   pinMode(BELL, INPUT);
 
