@@ -1,6 +1,6 @@
 #include "SoulissFramework.h"
 #include "bconf/StandardArduino.h"
-#include "conf/ethENC28J60.h"
+#include "conf/ethW5100.h"
 
 
 #include <SPI.h>
@@ -13,7 +13,7 @@ uint8_t ip_address[4]  = {192, 168, 1, 79};
 uint8_t subnet_mask[4] = {255, 255, 255, 0};
 uint8_t ip_gateway[4]  = {192, 168, 1, 1};
 #define myvNet_address  ip_address[3]
-#define gw_address 77
+#define myvNet_gateway 77
 #define myvNet_subnet   0xFF00
 
 // Local light slot
@@ -29,14 +29,12 @@ void setup() {
   
   Initialize();
   
-  Souliss_SetIPAddress(ip_address, subnet_mask, ip_gateway);
-  SetAddress(myvNet_address, myvNet_subnet, gw_address);
+    SetIPAddress(ip_address, subnet_mask, ip_gateway);
+    SetAddress(myvNet_address, myvNet_subnet, myvNet_gateway);
+    SetAsGateway(myvNet_gateway);
 
   pinMode(GARAGE, OUTPUT);
   pinMode(B_GARAGE, INPUT);
-
-    // Drive lights low by default
-  //digitalWrite(GARAGE, LOW);
 
   // Define light logic
   Set_T11(SL_GARAGELIGHT);
@@ -47,15 +45,16 @@ void loop() {
     UPDATEFAST();
 
     FAST_50ms() {
-
-      if(DigIn(B_GARAGE, Souliss_T1n_ToggleCmd, SL_GARAGELIGHT))
-        DigOut(GARAGE, Souliss_T1n_Coil, SL_GARAGELIGHT);
-
+      
       Logic_T11(SL_GARAGELIGHT);
+      if(DigIn(B_GARAGE, Souliss_T1n_ToggleCmd, SL_GARAGELIGHT))
+        {
+        DigOut(GARAGE, Souliss_T1n_Coil, SL_GARAGELIGHT);
+        }
 
     }
 
-    FAST_PeerComms();
+    FAST_BridgeComms();
     
     }
 
