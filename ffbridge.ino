@@ -185,5 +185,11 @@ void loop() {
     FAST_BridgeComms();
 
   }
+  
+EXECUTESLOW() {
+    UPDATESLOW();
+    SLOW_10s() {
 
+    }
+  } 
 }
