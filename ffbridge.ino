@@ -171,7 +171,7 @@ void loop() {
       
     }
 
-    FAST_510ms() {
+    FAST_1110ms() {
       Timer_Windows(SB_TEKLA);
       Timer_Windows(SB_HALO);
       Timer_Windows(SB_RTEKLA);
