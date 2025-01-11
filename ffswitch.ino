@@ -24,13 +24,13 @@
 
 // Define the RS485 network configuration
 #define myvNet_subnet   0xFF00
-#define Emelet_RS485   0xCD01
-#define GLent 0xCD02
-#define GFent 0xCD03
-#define Tekla 0xCD04
-#define Halo 0xCD05
-#define Vendeg 0xCD06
-#define Furdo 0xCD07
+#define Gateway_RS485   0xDE01
+#define GLent           0xDE02
+#define GFent           0xDE03
+#define Tekla           0xDE04
+#define Halo            0xDE05
+#define Vendeg          0xDE06
+#define Furdo           0xDE07
 
 
 #define LSLOT_LAMP1   0   //local light slot (doesn't matter)
