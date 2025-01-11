@@ -42,7 +42,7 @@ void setup()
 {   
     Initialize();
     // Set network parameters
-    SetAddress(Halo, myvNet_subnet, Emelet_RS485);      
+    SetAddress(GLent, myvNet_subnet, Gateway_RS485);      
 
     // Set the typical logic to handle the local button
     Set_T11(LSLOT_LAMP1);
@@ -64,7 +64,7 @@ void loop()
           
             if(DigIn(PIN_LAMP1, Souliss_T1n_ToggleCmd, LSLOT_LAMP1))
               {
-                Send(Emelet_RS485, RSLOT_LAMP1, Souliss_T1n_ToggleCmd);
+                Send(Gateway_RS485, RSLOT_LAMP1, Souliss_T1n_ToggleCmd);
                 ResetInput(LSLOT_LAMP1);
               }
 
